@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AAARemakes — Engine Conversion Pipelines</title>
+<meta name="description" content="AAARemakes LLC builds conversion pipelines that move classic games onto modern engines. Fallout 4-Ever brings Fallout 3 to Creation Engine. New Vegas and Skyrim in development.">
+<meta name="theme-color" content="#07080a">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://shade2363.github.io/aaaremakes/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AAARemakes — Old worlds. New engines.">
+<meta property="og:description" content="Conversion pipelines that carry classic games forward. Fallout 4-Ever builds the Capital Wasteland inside your own Fallout 4.">
+<meta property="og:url" content="https://shade2363.github.io/aaaremakes/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+<noscript><style>[data-reveal]{opacity:1 !important; transform:none !important}</style></noscript>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Fallout 4-Ever FO3",
+  "applicationCategory": "GameApplication",
+  "operatingSystem": "Windows 10, Windows 11",
+  "softwareVersion": "0.3.1",
+  "url": "https://github.com/shade2363/Fallout-4-Ever",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "fileSize": "29.6MB",
+  "description": "One-click installer that builds the Fallout 3 Capital Wasteland inside your own Fallout 4, from your own copy of Fallout 3. No game files included."
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="aurora" aria-hidden="true"></div>
+<canvas class="bg-canvas" id="bg" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-header" id="header">
+  <div class="wrap nav-row">
+    <div class="progress" id="progress" aria-hidden="true"></div>
+    <a class="brand" href="#top">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 3.5 29.5 27.5H2.5Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+        <path d="M16 12.5 22 24.5H10Z" fill="currentColor"/>
+      </svg>
+      <span class="brand-type">AAA<em>Remakes</em></span>
+      <span class="brand-sub">Conversion Studio</span>
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Primary">
+      <a href="#pipeline">Pipeline</a>
+      <a href="#projects">Projects</a>
+      <a href="#download">Download</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="#studio">Studio</a>
+      <a href="#faq">FAQ</a>
+      <a class="nav-donate" href="https://aaaremakes.com/sq/pay/donations" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.4S2 9.9 2 6.1a3.1 3.1 0 0 1 6-1 3.1 3.1 0 0 1 6 1c0 3.8-6 7.3-6 7.3Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Donate
+      </a>
+    </nav>
+
+    <div class="nav-actions">
+      <a class="icon-btn" href="https://discord.gg/GNZsfuD9RS" target="_blank" rel="noopener noreferrer"
+         aria-label="Join the AAARemakes Discord server" title="Discord">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.319 13.58.099 18.058a.082.082 0 0 0 .031.056 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .079.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.128 12.3 12.3 0 0 1-1.873.891.077.077 0 0 0-.041.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.029 19.94 19.94 0 0 0 6.002-3.03.077.077 0 0 0 .032-.055c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.029ZM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418Z"/></svg>
+      </a>
+      <a class="btn btn-primary btn-sm" href="#contact">Start a conversion</a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="nav" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="top">
+    <div class="hero-lines" aria-hidden="true"></div>
+    <div class="hero-glow" id="heroGlow" aria-hidden="true"></div>
+
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="pulse"></span>AAARemakes LLC · Engine Conversion Pipelines</p>
+        <h1>
+          Old worlds.<br>
+          <span class="grad">New engines.</span>
+        </h1>
+        <p class="lede">
+          We build the pipelines that carry classic games forward — geometry, navmesh, scripting
+          and game systems — rebuilt for modern tech without losing what made them worth playing.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#projects">
+            See the builds
+            <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#contact">Talk to the studio</a>
+        </div>
+
+        <dl class="hero-stats">
+          <div><dt>3</dt><dd>Pipelines in flight</dd></div>
+          <div><dt>2</dt><dd>Fallout titles on Creation</dd></div>
+          <div><dt>0</dt><dd>Original assets shipped</dd></div>
+        </dl>
+      </div>
+
+      <aside class="schematic" aria-label="Pipeline status">
+        <div class="schematic-head">
+          <span class="mono">PIPELINE / LIVE</span>
+          <span class="status"><span class="pulse"></span>running</span>
+        </div>
+
+        <ol class="schematic-rows">
+          <li class="done">
+            <span class="node"></span>
+            <div>
+              <p class="schematic-title">Source</p>
+              <p class="schematic-sub">Gamebryo · ESM · NIF · Papyrus-free</p>
+            </div>
+            <span class="tag">locked</span>
+          </li>
+          <li class="done">
+            <span class="node"></span>
+            <div>
+              <p class="schematic-title">Extract</p>
+              <p class="schematic-sub">Records · meshes · textures · audio</p>
+            </div>
+            <span class="tag">locked</span>
+          </li>
+          <li class="active">
+            <span class="node"></span>
+            <div>
+              <p class="schematic-title">Retarget</p>
+              <p class="schematic-sub">Navmesh · AI · factions · quests</p>
+            </div>
+            <span class="tag hot">active</span>
+          </li>
+          <li class="active">
+            <span class="node"></span>
+            <div>
+              <p class="schematic-title">Build</p>
+              <p class="schematic-sub">Creation Engine · FO4 runtime</p>
+            </div>
+            <span class="tag hot">active</span>
+          </li>
+        </ol>
+
+        <div class="schematic-foot">
+          <span class="mono">TARGET</span>
+          <span class="mono accent">CREATION ENGINE</span>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ MARQUEE ============ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="marqueeTrack">
+      <span>Fallout 3</span><i>◆</i><span>Fallout: New Vegas</span><i>◆</i><span>The Elder Scrolls V: Skyrim</span><i>◆</i>
+      <span>Creation Engine</span><i>◆</i><span>Navmesh</span><i>◆</i><span>Papyrus</span><i>◆</i>
+      <span>NIF / NIFX</span><i>◆</i><span>World Spaces</span><i>◆</i><span>LOD</span><i>◆</i>
+    </div>
+  </div>
+
+  <!-- ============ PIPELINE ============ -->
+  <section class="section" id="pipeline">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow"><span class="pulse"></span>What we build</p>
+        <h2>A pipeline, not a port.</h2>
+        <p class="section-lede">
+          A conversion is thousands of small decisions made consistently. We build tooling that makes
+          those decisions the same way every time — so a world stays coherent from the first mesh to the
+          last quest stage.
+        </p>
+      </header>
+
+      <ol class="steps" data-reveal-group>
+        <li class="step" data-reveal>
+          <span class="step-num">01</span>
+          <h3>Ingest &amp; map</h3>
+          <p>Read the source plugins, archives and scripts. Map records, form types and references onto the target schema before a single asset moves.</p>
+          <ul class="chips"><li>ESM parsing</li><li>Form mapping</li><li>Archive unpack</li></ul>
+        </li>
+        <li class="step" data-reveal>
+          <span class="step-num">02</span>
+          <h3>Translate assets</h3>
+          <p>Meshes, materials, textures and audio rebuilt for the new renderer — correct scale, correct shaders, correct collision.</p>
+          <ul class="chips"><li>Mesh rebuild</li><li>Physics</li><li>Materials</li></ul>
+        </li>
+        <li class="step" data-reveal>
+          <span class="step-num">03</span>
+          <h3>Rebuild systems</h3>
+          <p>Navmesh, AI packages, factions, inventories and quest logic re-authored in the target language and verified against the original behaviour.</p>
+          <ul class="chips"><li>Navmesh</li><li>AI &amp; factions</li><li>Quests</li></ul>
+        </li>
+        <li class="step" data-reveal>
+          <span class="step-num">04</span>
+          <h3>Validate &amp; ship</h3>
+          <p>Automated record checks, playthrough passes and performance budgets. Anything that fails is a bug in the pipeline, not a chore for the player.</p>
+          <ul class="chips"><li>Record QA</li><li>Playtests</li><li>Perf budget</li></ul>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section class="section section-alt" id="projects">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow"><span class="pulse"></span>Current work</p>
+        <h2>Three worlds. One engine family.</h2>
+        <p class="section-lede">
+          FO3 and FNV are running playable builds on the Fallout 4 engine. TTR — the Skyrim crossover —
+          is in active development. Every stage below is tracked as it lands.
+        </p>
+      </header>
+
+      <div class="projects" data-reveal-group>
+
+        <article class="project" data-reveal>
+          <div class="project-visual v-fo3" aria-hidden="true">
+            <div class="panel before">2008 · Gamebryo</div>
+            <div class="panel after">Creation Engine</div>
+            <span class="visual-code">PIPE / 01</span>
+          </div>
+          <div class="project-body">
+            <div class="project-top">
+              <span class="badge badge-dev"><span class="dot"></span>Demo release</span>
+              <span class="mono muted">FO3 → FO4</span>
+            </div>
+            <h3>Fallout 4-Ever <span class="edition">FO3</span></h3>
+            <p>The Capital Wasteland — plus all five DLC worlds — built inside your own Fallout 4: terrain, interiors, 4,260 placed NPCs and creatures, and working navmesh.</p>
+            <dl class="stage-grid">
+              <div><dt>World &amp; interiors</dt><dd class="s-done">complete</dd></div>
+              <div><dt>Navmesh</dt><dd class="s-done">complete</dd></div>
+              <div><dt>Actors &amp; creatures</dt><dd class="s-done">complete</dd></div>
+              <div><dt>Lighting &amp; weather</dt><dd class="s-work">testing</dd></div>
+              <div><dt>Quests &amp; dialogue</dt><dd class="s-next">queued</dd></div>
+              <div><dt>Voice, music &amp; radio</dt><dd class="s-next">queued</dd></div>
+            </dl>
+            <a class="card-link" href="https://github.com/shade2363/Fallout-4-Ever/releases/latest" target="_blank" rel="noopener noreferrer">
+              <span>Download <span data-rel-version>v0.3.1</span></span>
+              <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <article class="project" data-reveal>
+          <div class="project-visual v-fnv" aria-hidden="true">
+            <div class="panel before">2010 · Gamebryo</div>
+            <div class="panel after">Creation Engine</div>
+            <span class="visual-code">PIPE / 02</span>
+          </div>
+          <div class="project-body">
+            <div class="project-top">
+              <span class="badge badge-live"><span class="pulse"></span>Playable build</span>
+              <span class="mono muted">FNV → FO4</span>
+            </div>
+            <h3>Fallout 4-Ever <span class="edition">FNV</span></h3>
+            <p>The Mojave on Creation: factions, reputation, the Strip, and a script layer rebuilt around Fallout 4's systems.</p>
+            <dl class="stage-grid">
+              <div><dt>World &amp; interiors</dt><dd class="s-done">complete</dd></div>
+              <div><dt>Navmesh</dt><dd class="s-done">complete</dd></div>
+              <div><dt>Factions &amp; reputation</dt><dd class="s-work">refining</dd></div>
+              <div><dt>Quests</dt><dd class="s-work">refining</dd></div>
+              <div><dt>Companions</dt><dd class="s-work">refining</dd></div>
+              <div><dt>DLC integration</dt><dd class="s-next">in queue</dd></div>
+            </dl>
+            <a class="card-link" href="https://discord.gg/GNZsfuD9RS" target="_blank" rel="noopener noreferrer">
+              <span>Follow progress</span>
+              <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <article class="project" data-reveal>
+          <div class="project-visual v-sky" aria-hidden="true">
+            <div class="panel before">2011 · Creation 1</div>
+            <div class="panel after">Creation · FO4</div>
+            <span class="visual-code">PIPE / 03</span>
+          </div>
+          <div class="project-body">
+            <div class="project-top">
+              <span class="badge badge-dev"><span class="dot"></span>In development</span>
+              <span class="mono muted">SKYRIM → FO4</span>
+            </div>
+            <h3>TTR <span class="edition">Tale of Two Realms</span></h3>
+            <p>Not just a conversion — a non-canon crossover mod. Skyrim's world space lands on the Fallout 4 branch of Creation: terrain, magic, and a Papyrus target rebuild.</p>
+            <dl class="stage-grid">
+              <div><dt>Record mapping</dt><dd class="s-done">complete</dd></div>
+              <div><dt>Landscape &amp; LOD</dt><dd class="s-work">building</dd></div>
+              <div><dt>Magic &amp; effects</dt><dd class="s-work">building</dd></div>
+              <div><dt>Papyrus target</dt><dd class="s-work">building</dd></div>
+              <div><dt>Navmesh</dt><dd class="s-next">queued</dd></div>
+              <div><dt>Quests</dt><dd class="s-next">queued</dd></div>
+            </dl>
+            <a class="card-link" href="https://discord.gg/GNZsfuD9RS" target="_blank" rel="noopener noreferrer">
+              <span>Follow progress</span>
+              <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 3.5 13 8l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          </div>
+        </article>
+
+      </div>
+
+      <p class="fineprint">
+        Stage status reflects internal tracking, not a release schedule. Builds are generated on your
+        own PC from legally owned copies; no game assets are distributed.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ DOWNLOAD ============ -->
+  <section class="section download" id="download">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow"><span class="pulse"></span>Release</p>
+        <h2>Get Fallout 4-Ever FO3</h2>
+        <p class="section-lede">
+          The Fallout 3 pipeline ships as a one-click installer. It builds the Capital Wasteland inside
+          your own Fallout 4, from your own Fallout 3 — your game files are never modified, and
+          uninstalling puts everything back.
+        </p>
+      </header>
+
+      <div class="release" data-reveal>
+        <div class="release-main">
+          <div class="release-head">
+            <span class="badge badge-dev"><span class="dot"></span>Testing release</span>
+            <span class="mono muted" data-rel-date>6 November 2026</span>
+          </div>
+
+          <p class="release-version">
+            <span class="mono">VERSION</span>
+            <strong data-rel-tag>v0.3.1</strong>
+          </p>
+
+          <div class="release-actions">
+            <a class="btn btn-primary btn-lg" data-rel-download
+               href="https://github.com/shade2363/Fallout-4-Ever/releases/download/v0.3.1/CapitalConvert-0.3.1.zip"
+               target="_blank" rel="noopener noreferrer">
+              Download installer
+              <span class="mono btn-meta" data-rel-size>29.6 MB</span>
+            </a>
+            <a class="btn btn-ghost" href="https://github.com/shade2363/Fallout-4-Ever" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
+          </div>
+
+          <ul class="release-links">
+            <li><a href="https://github.com/shade2363/Fallout-4-Ever/releases" target="_blank" rel="noopener noreferrer">All releases</a></li>
+            <li><a data-rel-sums href="https://github.com/shade2363/Fallout-4-Ever/releases/download/v0.3.1/SHA256SUMS.txt" target="_blank" rel="noopener noreferrer">SHA-256 checksums</a></li>
+            <li><a href="https://github.com/shade2363/Fallout-4-Ever/blob/main/docs/INSTALL.md" target="_blank" rel="noopener noreferrer">Install guide</a></li>
+          </ul>
+
+          <p class="release-note">
+            Free · Windows 10/11, 64-bit · no admin rights · updates are signed, resumable at any point.
+            Compare the zip against the checksums before you run it.
+          </p>
+        </div>
+
+        <div class="release-side">
+          <p class="mono side-title">You need</p>
+          <ul class="req">
+            <li><span>Fallout 3</span><em>Game of the Year Edition + all five DLC</em></li>
+            <li><span>Fallout 4</span><em>Steam 1.11.x + the free Creation Kit</em></li>
+            <li><span>System</span><em>Windows 10 or 11, 64-bit</em></li>
+            <li><span>Disk</span><em>~150 GB free, mostly temporary</em></li>
+            <li><span>Time</span><em>4–8 hours on the first run</em></li>
+            <li><span>Internet</span><em>once, for two hash-checked tools</em></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="scope" data-reveal>
+        <div>
+          <p class="mono scope-title">In this demo</p>
+          <ul class="chips">
+            <li>Capital Wasteland</li>
+            <li>5 DLC worlds</li>
+            <li>Interiors &amp; doors</li>
+            <li>4,260 actors</li>
+            <li>7,198 navmeshes</li>
+            <li>Lighting &amp; water</li>
+            <li>New Game start</li>
+          </ul>
+        </div>
+        <div>
+          <p class="mono scope-title">Not yet</p>
+          <ul class="chips chips-dim">
+            <li>Quests</li>
+            <li>Dialogue</li>
+            <li>Voice</li>
+            <li>Music &amp; radio</li>
+            <li>NPC faces</li>
+          </ul>
+        </div>
+      </div>
+
+      <ol class="mini-steps" data-reveal>
+        <li>
+          <span class="mono">01</span>
+          <p>Download the zip, unzip it anywhere outside a game folder, and verify its SHA-256.</p>
+        </li>
+        <li>
+          <span class="mono">02</span>
+          <p>Run <code>CapitalConvert.exe</code>, check that both games are found, press <em>INSTALL</em>.</p>
+        </li>
+        <li>
+          <span class="mono">03</span>
+          <p>Start Fallout 4, choose <em>New Game</em> — you arrive outside Vault 101 with a Pip-Boy.</p>
+        </li>
+      </ol>
+
+      <p class="dl-help">
+        Stuck at a step? <a href="https://discord.gg/GNZsfuD9RS" target="_blank" rel="noopener noreferrer">Ask in the Discord</a>
+        — install reports, screenshots and crash logs go there first.
+      </p>
+
+      <ul class="dl-stats" data-reveal>
+        <li><strong>4,260</strong><span>actors placed</span></li>
+        <li><strong>7,198</strong><span>navmeshes built</span></li>
+        <li><strong>5</strong><span>DLC worlds</span></li>
+        <li><strong>0</strong><span>game files shared</span></li>
+      </ul>
+
+      <p class="fineprint">
+        Fallout 4-Ever is made by <a href="https://github.com/shade2363" target="_blank" rel="noopener noreferrer">@yourstruly_0</a>
+        with opness1549. The scripts are MIT-licensed; the third-party tools keep their own licences.
+        No game files are included or shared — everything is built on your PC, for personal use only.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ ROADMAP ============ -->
+  <section class="section" id="roadmap">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow"><span class="pulse"></span>What's next</p>
+        <h2>The pipeline generalises.</h2>
+        <p class="section-lede">
+          Each conversion adds capability to the same toolchain. The order below is the order we ship,
+          not a promise of dates.
+        </p>
+      </header>
+
+      <ol class="timeline" data-reveal-group>
+        <li class="tl-item is-now" data-reveal>
+          <span class="tl-dot"></span>
+          <p class="mono tl-when">Now</p>
+          <h3>Fallout 3 &amp; New Vegas</h3>
+          <p>Fallout 4-Ever FO3's world, actors and navmesh are public. Quests, dialogue and voice come next; FNV follows the same path.</p>
+        </li>
+        <li class="tl-item" data-reveal>
+          <span class="tl-dot"></span>
+          <p class="mono tl-when">In development</p>
+          <h3>Skyrim → Fallout 4</h3>
+          <p>Landscape, magic and the Papyrus target layer. The hardest translation work in the set.</p>
+        </li>
+        <li class="tl-item" data-reveal>
+          <span class="tl-dot"></span>
+          <p class="mono tl-when">Next</p>
+          <h3>Oblivion &amp; Morrowind</h3>
+          <p>Older Gamebryo and NetImmerse titles, using the record mapper built for the Fallout passes.</p>
+        </li>
+        <li class="tl-item" data-reveal>
+          <span class="tl-dot"></span>
+          <p class="mono tl-when">Research</p>
+          <h3>Beyond Bethesda</h3>
+          <p>Exploring non-Gamebryo source games where a principled conversion is actually possible.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ STUDIO ============ -->
+  <section class="section section-alt" id="studio">
+    <div class="wrap studio">
+      <div class="studio-copy">
+        <p class="eyebrow"><span class="pulse"></span>The studio</p>
+        <h2>Small studio. Long pipelines.</h2>
+        <p class="section-lede">
+          AAARemakes is an independent conversion studio. We take old games seriously: their pacing,
+          their jank, their intent. A remake that plays like a different game isn't a conversion.
+        </p>
+        <p>
+          We work in the open about what's done and what isn't. No trailer built from a render, no
+          percentage that means nothing. If a system is running in a playable build, it's on this site.
+        </p>
+      </div>
+
+      <ul class="principles">
+        <li>
+          <span class="mono">01</span>
+          <h3>Behaviour over fidelity</h3>
+          <p>The original game has to still feel like itself. When fidelity and feel conflict, feel wins.</p>
+        </li>
+        <li>
+          <span class="mono">02</span>
+          <h3>Tooling first</h3>
+          <p>A fix done by hand is a fix that comes back. Every manual step becomes a pipeline stage.</p>
+        </li>
+        <li>
+          <span class="mono">03</span>
+          <h3>Respect the rights holders</h3>
+          <p>We ship pipeline work and documentation — never somebody else's assets.</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SUPPORT ============ -->
+  <section class="section support" id="support">
+    <div class="wrap">
+      <div class="support-band" data-reveal>
+        <div class="support-copy">
+          <p class="eyebrow"><span class="pulse"></span>Support</p>
+          <h2>Keep the studio running.</h2>
+          <p>
+            AAARemakes is an independent conversion studio. Donations fund the machines, the test rigs
+            and the hours behind every pipeline — Fallout 3, New Vegas, Skyrim and whatever comes next.
+            They don't buy access, perks or priority.
+          </p>
+          <p class="support-fine">
+            Optional, one-off or recurring. Every build stays free, and no game content is sold.
+          </p>
+        </div>
+
+        <div class="support-actions">
+          <a class="btn btn-primary btn-lg" data-donate href="https://aaaremakes.com/sq/pay/donations" target="_blank" rel="noopener noreferrer">
+            <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.4S2 9.9 2 6.1a3.1 3.1 0 0 1 6-1 3.1 3.1 0 0 1 6 1c0 3.8-6 7.3-6 7.3Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            Donate
+          </a>
+          <span class="support-note">Secure checkout · AAARemakes LLC</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq">
+    <div class="wrap faq-wrap">
+      <header class="section-head">
+        <p class="eyebrow"><span class="pulse"></span>Questions</p>
+        <h2>The short answers.</h2>
+      </header>
+
+      <div class="faq">
+        <details open>
+          <summary>Is a conversion build downloadable?</summary>
+          <p>Fallout 4-Ever FO3 is: it's a free installer on GitHub. It builds from your own copies of Fallout 3 and Fallout 4, ships no game files, and the result is for personal use only. The New Vegas and Skyrim editions aren't public yet.</p>
+        </details>
+        <details>
+          <summary>What's missing from the Fallout 4-Ever demo?</summary>
+          <p>Quests, dialogue, voice, music, radio and NPC faces. What's in it: the whole Capital Wasteland and the five DLC worlds, 4,260 placed actors, 7,198 navmeshes, rebuilt lighting and water, and a New Game start outside Vault 101. The repository's roadmap tracks what lands next.</p>
+        </details>
+        <details>
+          <summary>Why does the first conversion take 4–8 hours?</summary>
+          <p>It's re-authoring a world, not copying one: thousands of records, meshes and references are translated and rebuilt on your machine. It runs unattended and resumes where it stopped, so you can close the window and come back.</p>
+        </details>
+        <details>
+          <summary>Why the Fallout 4 engine and not something newer?</summary>
+          <p>It's the closest relative to the source games. Records, scripting model and asset formats are near enough that a principled conversion is possible — which is exactly what makes the pipeline generalise to the next title.</p>
+        </details>
+        <details>
+          <summary>How long does a conversion take?</summary>
+          <p>Longer than a port, shorter than a remake. The first pass on a title is the expensive one; subsequent titles reuse the mapping and tooling. We don't quote dates before a record map exists.</p>
+        </details>
+        <details>
+          <summary>Do you take on outside projects?</summary>
+          <p>Selectively. We're most useful to teams with a defined source game, a target engine, and a reason to stay inside the engine family. Get in touch with the specifics.</p>
+        </details>
+        <details>
+          <summary>Can I follow the work?</summary>
+          <p><a href="https://discord.gg/GNZsfuD9RS" target="_blank" rel="noopener noreferrer">The Discord server</a> is the main room: announcements, roadmap talk and build reports. The GitHub repository carries releases and issues.</p>
+        </details>
+        <details>
+          <summary>Where do I report a bug or ask for help?</summary>
+          <p>The Discord is fastest — install reports, screenshots and crash logs go there first. Anything that needs tracking belongs in the GitHub issues as well.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section contact" id="contact">
+    <div class="wrap contact-grid">
+      <div class="contact-copy">
+        <p class="eyebrow"><span class="pulse"></span>Contact</p>
+        <h2>Bring an old world forward.</h2>
+        <p class="section-lede">
+          Conversion enquiry, technical question, or a build you want to show us — it all lands in the
+          same inbox.
+        </p>
+        <ul class="contact-list">
+          <li>
+            <span class="mono">EMAIL</span>
+            <button type="button" class="mail-link" data-mail-link>Email the studio</button>
+          </li>
+          <li>
+            <span class="mono">DISCORD</span>
+            <a href="https://discord.gg/GNZsfuD9RS" target="_blank" rel="noopener noreferrer">Join the AAARemakes server</a>
+          </li>
+          <li>
+            <span class="mono">STUDIO</span>
+            <span>AAARemakes LLC</span>
+          </li>
+          <li>
+            <span class="mono">RESPONSE</span>
+            <span>Usually within a few days</span>
+          </li>
+        </ul>
+      </div>
+
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="field">
+          <label for="name">Name</label>
+          <input id="name" name="name" type="text" autocomplete="name" placeholder="Your name" required>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@studio.com" required>
+        </div>
+        <div class="field">
+          <label for="topic">Enquiry type</label>
+          <select id="topic" name="topic">
+            <option>Conversion project</option>
+            <option>Technical question</option>
+            <option>Press / collaboration</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">Details</label>
+          <textarea id="message" name="message" rows="4" placeholder="Source game, target engine, and where you are in the process." required></textarea>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit">Send enquiry</button>
+        <p class="form-note" id="formNote">Opens your mail client with the message ready to send.</p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-top">
+    <div class="footer-brand">
+      <a class="brand" href="#top">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 3.5 29.5 27.5H2.5Z" fill="none" stroke="currentColor" stroke-width="1.7"/>
+          <path d="M16 12.5 22 24.5H10Z" fill="currentColor"/>
+        </svg>
+        <span class="brand-type">AAA<em>Remakes</em></span>
+      </a>
+      <p>Engine conversion pipelines for classic games. Old worlds, new engines.</p>
+    </div>
+
+    <nav class="footer-cols" aria-label="Footer">
+      <div>
+        <p class="mono">Studio</p>
+        <a href="#pipeline">Pipeline</a>
+        <a href="#projects">Projects</a>
+        <a href="#download">Download</a>
+        <a href="#roadmap">Roadmap</a>
+      </div>
+      <div>
+        <p class="mono">Info</p>
+        <a href="#studio">About</a>
+        <a href="#support">Support</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div>
+        <p class="mono">Community</p>
+        <a href="https://discord.gg/GNZsfuD9RS" target="_blank" rel="noopener noreferrer">Discord</a>
+        <a href="https://github.com/shade2363/Fallout-4-Ever" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/shade2363/Fallout-4-Ever/releases" target="_blank" rel="noopener noreferrer">Releases</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="wrap footer-bottom">
+    <p>© <span id="year">2026</span> AAARemakes LLC. All rights reserved.</p>
+    <p class="legal">
+      Not affiliated with or endorsed by Bethesda Softworks, ZeniMax Media, Microsoft, or any original
+      rights holder. All trademarks belong to their respective owners. No game assets are distributed.
+    </p>
+    <a class="to-top" href="#top" aria-label="Back to top">↑</a>
+  </div>
+</footer>
+
+<script src="assets/background.js" defer></script>
+<script src="assets/main.js" defer></script>
+</body>
+</html>
