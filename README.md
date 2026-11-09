@@ -158,6 +158,23 @@ and `rel="noopener noreferrer"`.
 git add -A && git commit -m "update" && git push
 ```
 
+### Squarespace (Code block)
+
+`node build-embed.js` regenerates `squarespace-embed.html` from the site source: the same design,
+inlined into a single Code block, isolated in a shadow root so Squarespace's CSS cannot reach it
+(and ours cannot leak out). Requires Core / Plus / Advanced (JS in Code blocks).
+
+1. Squarespace → Pages → **+** → Blank page (or use an existing page).
+2. Add a section, set its background to black and spacing to none.
+3. Add a **Code block**, paste the whole of `squarespace-embed.html`, Apply, Save.
+4. Optional — remove the double header: Design → Custom CSS:
+
+   ```css
+   body:has(#aa-embed) header, body:has(#aa-embed) footer { display: none !important; }
+   ```
+
+5. Code blocks show a grey placeholder while editing — check the live URL.
+
 Other hosts work identically, no configuration needed:
 
 - **Netlify / Vercel / Cloudflare Pages**: drag the folder in, or connect the repo.
