@@ -151,11 +151,20 @@ and `rel="noopener noreferrer"`.
 
 ## Deploy
 
-Any static host works — no configuration needed.
+**Live now:** <https://shade2363.github.io/aaaremakes/> — served by GitHub Pages from `main` in
+`shade2363/aaaremakes`. Every `git push` to `main` redeploys in about a minute.
+
+```bash
+git add -A && git commit -m "update" && git push
+```
+
+Other hosts work identically, no configuration needed:
 
 - **Netlify / Vercel / Cloudflare Pages**: drag the folder in, or connect the repo.
-- **GitHub Pages**: push to a repo, enable Pages on the branch root.
 - **Plain hosting**: upload the folder contents to `public_html`.
+
+When the site moves to `aaaremakes.com`, update three places: the `canonical` link and `og:url`
+in `index.html`, plus the `Sitemap:` line in `robots.txt` and `<loc>` in `sitemap.xml`.
 
 ## Design notes
 
@@ -163,4 +172,4 @@ Any static host works — no configuration needed.
 - All visuals are CSS/SVG — no screenshot assets, so nothing is borrowed from the games.
 - Responsive from 360px up; mobile menu, sticky header with a scroll-progress hairline.
 - Respects `prefers-reduced-motion`: reveals, marquee and pulses stop.
-- Lighthouse (local): accessibility 0.96+ · best practices 1.0 · SEO clean when served over HTTP.
+- Lighthouse (local): accessibility 1.0 · best practices 1.0 · SEO 1.0.
